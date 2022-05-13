@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function(){
     var newContent = document.createTextNode('h2');
 
     button.addEventListener('click', function(event){
-        const numberdays = document.getElementById("NbDays").value;
+        const numberdays = document.getElementById("NbDays").value;   // option balise pour les jours
         console.log(numberdays);
     
         event.preventDefault();
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function(){
             let lon= data.results[0].geometry.lng
 
             const affichageVille = document.getElementsByTagName('h2')[0];
-            const affichageResultats = document.getElementById("res")
+            const affichageResultats = document.getElementById("res")  // afficher div qui englobe element creer
         
 
             // appel de la seconde API
@@ -56,49 +56,107 @@ document.addEventListener("DOMContentLoaded", function(){
 
             affichageResultats.innerHTML = "";
 
-           for(let i =0; i < numberdays ;i++){
-                let weekday = week[day];
+           for(let i =0; i < numberdays; i++){
+                    let weekday = week[day];
 
-                const meteo = data_api_temps.daily[i].weather[0].id;
-               
-                if(meteo >= 600 || meteo <= 622){
-                    iconsrc = "./weathericons/weathers/snow.svg";
-                    
-                }
-                 if(meteo == 801 || meteo == 802){
-                    iconsrc = "./weathericons/weathers/clouds.svg";    
-                    
-                } if(meteo == 803 || meteo == 804){
-                    iconsrc = "./weathericons/weathers/cloudy.svg";
-                    
-                } if(meteo >= 500 || meteo <= 522){
-                    iconsrc = "./weathericons/weathers/rain.svg";
-                    
-                } if(meteo == 800){
-                    iconsrc = "./weathericons/weathers/sun.svg";
-                    
-                }
+                    const meteo = data_api_temps.daily[i].weather[0].id;
                 
-            let divi = document.createElement("div");
-            divi.classList= "Logotemp";
-            let h3 = document.createElement("H3");
-            let titre = document.createTextNode(weekday);
-            let image = document.createElement("img");
-            image.src = iconsrc;
+                    if(meteo >= 600 && meteo <= 622){
+                        iconsrc = "./weathericons/weathers/snow.svg";
+                        
+                    }
+                     else if(meteo == 801 || meteo == 802){
+                        iconsrc = "./weathericons/weathers/cloudy.svg";    
+                        
+                    } else if(meteo == 803 || meteo == 804){
+                        iconsrc = "./weathericons/weathers/clouds.svg";
+                        
+                    }else if(meteo >= 500 && meteo <= 522){
+                        iconsrc = "./weathericons/weathers/rain.svg";
+                        
+                    }else if(meteo == 800){
+                        iconsrc = "./weathericons/weathers/sun.svg";
+                        
+                    }
 
-            h3.appendChild(titre);
-            divi.appendChild(h3);
-            divi.appendChild(image);
+                    console.log(data_api_temps)
+                    
+                let divi = document.createElement("div");         // div pour le logo
+                divi.classList = "Logotemp";                      // class logotemps pour div de logo
+                let h3 = document.createElement("H3");            //  creer un h3
+                let titre = document.createTextNode(weekday);     //  jour de semaine
+                let image = document.createElement("img");        //  creer une image  balise img
+                image.src = iconsrc;                              //  affecter ma variable image.src
+  
+                divi.appendChild(h3);                             //ajouter div en h3
+                h3.appendChild(titre);                            //ecrire en h3
+                divi.appendChild(image);                          // ajouter logo
 
-            document.getElementById("res").appendChild(divi);
+                document.getElementById("res").appendChild(divi);  // main div id res
+                
+                    if(day + 1 == 7){
+                        day = 0;                                 // afficher le jour meme (premier) 
+                    }
+                    else{
+                    day = day + 1;                               // sinon le jour suivant
+                    }  
+                }
+                let SUN_URL=`https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lon}`
+               
+                fetch(SUN_URL) 
+                .then(response => { 
+                    if (response.status == 200) { 
+                        return response.json()  
+                    }
+                    else console.log(`Erreur lorsqu'on a tenté de récupérer les data`);
+                })
+                .then( dataSunrise => {
+                    $.get(URL_OWM, function (dataOpenWeather) {
+                        //Déclaration des variables de temps
+                        console.log(dataOpenWeather)
+                        let heure_lever_soleil = dataSunrise.results.sunrise;
+                        let coucher_du_soleil = dataSunrise.results.sunset;
+                        let heure_actuelle = dataOpenWeather.current.dt;
+                        console.log(dataOpenWeather);
+
+                        heure_actuelle = new Date(heure_actuelle * 1000)
+                        x = heure_actuelle.getHours().toString()
+                        y = heure_actuelle.getMinutes().toString()
+                        z = heure_actuelle.getSeconds().toString()//.getMinutes().getSeconds()//.toUTCString().slice(-11, -4).replace(':', '').replace(':', '')
+                        heure_actuelle = x+y+z
+                        heure_actuelle = parseInt(heure_actuelle)
+
+                        coucher_du_soleil = parseInt(coucher_du_soleil.slice(0, -3).replace(':', '').replace(':', '')) + 120000
+                        
+                        heure_lever_soleil = parseInt(heure_lever_soleil.slice(0, -3).replace(':', '').replace(':', '')) + 120000
+                       
+                        console.log(heure_actuelle)
+                        console.log(coucher_du_soleil)
+                        console.log(heure_lever_soleil)
+
+                        /*TODO: convertir unixheure_actuellestamp en date*/ 
+
+                        if (heure_actuelle > heure_lever_soleil && heure_actuelle<coucher_du_soleil) {
+                              document.getElementsByTagName("body").style.backgroundcolor = 'grey'
+                              
+                            //il fait jour
+                            /*TODO: traitement css pour le jour*/ 
+
+                        } else {
+                            //il fait nuit
+                            /*TODO: traitement css pour la nuit*/ 
+                        }
+
+                        //console.log(dataOpenWeather);
+                        
+                    })
+                    
+                    
+                   
+                })
             
-             if(day + 1 == 7)
-            {day = 0;}
-            else 
-            {day = day + 1;}
-           }
             })
         })
-        .catch(err => console.log(err))
+        .catch(err => console.log(err));
     })
 }) 
