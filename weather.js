@@ -109,50 +109,55 @@ document.addEventListener("DOMContentLoaded", function(){
                 }
                 
                 let SUN_URL=`https://api.sunrise-sunset.org/json?lat=${coords.lat}&lng=${coords.lon}`
-               
+          
                 fetch(SUN_URL) 
                 .then(response => { 
                     if (response.status == 200) { 
                         return response.json()  
-                    }
+}
                     else console.log(`Erreur lorsqu'on a tenté de récupérer les data`);
                 })
                 .then( dataSunrise => {
                     let heure_lever_soleil = dataSunrise.results.sunrise;
                     let coucher_du_soleil = dataSunrise.results.sunset;
-                    // $.get(URL_OWM, function (dataOpenWeather) {
-                    //     //Déclaration des variables de temps
-                    //     console.log(dataOpenWeather)
-                    //     let heure_actuelle = dataOpenWeather.current.dt;
-                    //     console.log(dataOpenWeather);
+                    $.get(URL_OWM, function (dataOpenWeather) {
+                        //Déclaration des variables de temps
+                        console.log(dataOpenWeather)
+                        let unixtimestamp = dataOpenWeather.current.dt;
+                        console.log(dataOpenWeather);
 
-                    //     heure_actuelle = new Date(heure_actuelle * 1000)
-                    //     x = heure_actuelle.getHours().toString()
-                    //     y = heure_actuelle.getMinutes().toString()
-                    //     z = heure_actuelle.getSeconds().toString()//.getMinutes().getSeconds()//.toUTCString().slice(-11, -4).replace(':', '').replace(':', '')
-                    //     heure_actuelle = x+y+z
-                    //     heure_actuelle = parseInt(heure_actuelle)
+                        // heure_actuelle = new Date(heure_actuelle * 1000)
+                        // x = heure_actuelle.getHours().toString()
+                        // y = heure_actuelle.getMinutes().toString()
+                        // z = heure_actuelle.getSeconds().toString()//.getMinutes().getSeconds()//.toUTCString().slice(-11, -4).replace(':', '').replace(':', '')
+                        // heure_actuelle = x+y+z
+                        // heure_actuelle = parseInt(heure_actuelle)
 
-                    //     coucher_du_soleil = parseInt(coucher_du_soleil.slice(0, -3).replace(':', '').replace(':', '')) + 120000
-                        
-                    //     heure_lever_soleil = parseInt(heure_lever_soleil.slice(0, -3).replace(':', '').replace(':', '')) + 120000
+                        // coucher_du_soleil = parseInt(coucher_du_soleil.slice(0, -3).replace(':', '').replace(':', '')) + 120000 
+                        // heure_lever_soleil = parseInt(heure_lever_soleil.slice(0, -3).replace(':', '').replace(':', '')) 
                        
-                    //     console.log(heure_actuelle)
-                    //     console.log(coucher_du_soleil)
-                    //     console.log(heure_lever_soleil)
+                        // console.log("heure actuelle "  +heure_actuelle)
+                        // console.log("lever "  +heure_lever_soleil)
+                        // console.log("coucher " + coucher_du_soleil)
 
-                    //     /*TODO: convertir unixheure_actuellestamp en date*/ 
+                        var date = new Date(unixtimestamp*1000);
+                        heure_actuelle = date.toLocaleString('en-US', {timeZone: 'UTC',hour: "numeric", minute: 'numeric', second: 'numeric'});
 
-                    //     if (heure_actuelle > heure_lever_soleil && heure_actuelle<coucher_du_soleil) {
-                    //           document.getElementsByTagName("body").style.backgroundcolor = 'grey'
-                              
-                    //         //il fait jour
-                    //         /*TODO: traitement css pour le jour*/ 
+                        /*TODO: convertir unixheure_actuellestamp en date*/ 
 
-                    //     } else {
-                    //         //il fait nuit
-                    //         /*TODO: traitement css pour la nuit*/ 
-                    //     }
+                        if (Date.parse('01/01/1970 ' +heure_actuelle) > Date.parse('01/01/1970 ' +heure_lever_soleil) && Date.parse('01/01/1970 ' +heure_actuelle) < Date.parse('01/01/1970 ' +coucher_du_soleil)) {
+                            document.body.style.backgroundColor = 'blueviolet'; // la couler de l'autres
+                              console.log("jour"); 
+                            //il fait jour
+                            /*TODO: traitement css pour le jour*/ 
+
+                        } else {
+                            //il fait nuit
+                            /*TODO: traitement css pour la nuit*/ 
+                            document.body.style.backgroundColor = 'gray'; 
+                            console.log("nuit");
+
+                        }
 
                         //console.log(dataOpenWeather);
                         
@@ -160,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     
                     
                    
-                // })
+                 })
             
             })
         })
