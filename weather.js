@@ -14,24 +14,21 @@ function getCoordsFromAPI(city) {
         let lat = data.results[0].geometry.lat
         let lon = data.results[0].geometry.lng
         let coords = { lat: lat, lon: lon }
-        return coords
+        return coords;
     })
 }
 
 
 // ############# LOGIQUE DE L'APP ##################
 
-document.addEventListener("DOMContentLoaded", function(){
     const button = document.getElementById("submit");
     const newContent = document.createTextNode('h2');
     const affichageVille = document.getElementsByTagName('h2')[0];
     const affichageResultats = document.getElementById("res")  // afficher div qui englobe element creer
 
 
-    button.addEventListener('click', function(event){
-
+    function getMethod() {
         const numberdays = document.getElementById("NbDays").value;   // option balise pour les jours    
-        event.preventDefault();
         const nom_ville= document.getElementById("inputNomVille");        
         let newville = nom_ville.value;
        
@@ -53,14 +50,13 @@ document.addEventListener("DOMContentLoaded", function(){
 
                 //document.getElementById("res").innerHTML = "";
 
-                if(response.status ==200){
+                if(response.status == 200){
                     return response.json()
                     }
                 else console.log("erreur lorsque recuparation");
             })
             .then(data_api_temps => {
 
-                affichageResultats.innerHTML = "";
 
                 for(let i =0; i < numberdays; i++){
                     let weekday = week[day];
@@ -126,20 +122,6 @@ document.addEventListener("DOMContentLoaded", function(){
                         let unixtimestamp = dataOpenWeather.current.dt;
                         console.log(dataOpenWeather);
 
-                        // heure_actuelle = new Date(heure_actuelle * 1000)
-                        // x = heure_actuelle.getHours().toString()
-                        // y = heure_actuelle.getMinutes().toString()
-                        // z = heure_actuelle.getSeconds().toString()//.getMinutes().getSeconds()//.toUTCString().slice(-11, -4).replace(':', '').replace(':', '')
-                        // heure_actuelle = x+y+z
-                        // heure_actuelle = parseInt(heure_actuelle)
-
-                        // coucher_du_soleil = parseInt(coucher_du_soleil.slice(0, -3).replace(':', '').replace(':', '')) + 120000 
-                        // heure_lever_soleil = parseInt(heure_lever_soleil.slice(0, -3).replace(':', '').replace(':', '')) 
-                       
-                        // console.log("heure actuelle "  +heure_actuelle)
-                        // console.log("lever "  +heure_lever_soleil)
-                        // console.log("coucher " + coucher_du_soleil)
-
                         var date = new Date(unixtimestamp*1000);
                         heure_actuelle = date.toLocaleString('en-US', {timeZone: 'UTC',hour: "numeric", minute: 'numeric', second: 'numeric'});
 
@@ -152,23 +134,21 @@ document.addEventListener("DOMContentLoaded", function(){
                             /*TODO: traitement css pour le jour*/ 
 
                         } else {
-                            //il fait nuit
-                            /*TODO: traitement css pour la nuit*/ 
-                            document.body.style.backgroundColor = 'gray'; 
+                                //il fait nuit
+                                /*TODO: traitement css pour la nuit*/ 
+                            document.body.style.backgroundColor = 'black'; 
+                            document.body.style.filer = "invert(50%)";
+                            Object.values(document.body.getElementsByTagName("*")).forEach(e => {
+                            e.style.filter = "invert(50%)"
                             console.log("nuit");
-
+                         })
+                                //console.log("nuit");
                         }
-
-                        //console.log(dataOpenWeather);
-                        
-                })
-                    
-                    
-                   
+                    })
+                                       
                  })
             
             })
         })
         .catch(err => console.log(err));
-    })
-}) 
+    }
